@@ -9,7 +9,7 @@ using Queue;
 namespace Queue.Tests
 {
     public class QueueTests
-    { 
+    {
         [Test]
         public void CreateQueue_NegativeCapacity_ThrowArgumentException() =>
            Assert.Throws<ArgumentException>(() => new Queue.Queue<int>(-10));
@@ -35,7 +35,7 @@ namespace Queue.Tests
             Assert.AreEqual(2, queue.Count);
         }
 
-        [Test]      
+        [Test]
         public void Dequeue_QueueIsEmpty_ThrowsInvalidOperationException()
         {
             var queue = new Queue<int>();
@@ -59,7 +59,7 @@ namespace Queue.Tests
             char element = queue.Peek();
             Assert.IsTrue(element == 'a' && queue.Count == 3);
         }
-        
+
         [Test]
         public void Dequeue_QueueHasElements_ReturnAndRemoveElement()
         {
@@ -79,7 +79,7 @@ namespace Queue.Tests
             queue.Enqueue('a');
             queue.Enqueue('b');
             queue.Enqueue('c');
-            foreach(var symbol in queue)
+            foreach (var symbol in queue)
             {
                 result.Add(symbol);
             }
@@ -93,7 +93,56 @@ namespace Queue.Tests
             var queue = new Queue<int>();
             Assert.IsTrue(queue.IsEmpty);
         }
-            
 
+        [Test]
+        public void Current_BeforeMoveNext_ThrowInvalidOperationException() 
+        {
+            var queue = new Queue<int>();
+            queue.Enqueue(1);
+            queue.Enqueue(2);
+            var enumerator = queue.GetEnumerator();
+            Assert.Throws<InvalidOperationException>(() => { int current = enumerator.Current; });
+        }
+
+        [Test]
+        public void Current_AfterEnumerationEnded_ThrowInvalidOperationException()
+        {
+            var queue = new Queue<int>();
+            queue.Enqueue(1);
+            queue.Enqueue(2);
+            var enumerator = queue.GetEnumerator();
+            enumerator.MoveNext();
+            enumerator.MoveNext();
+            enumerator.MoveNext();
+            Assert.Throws<InvalidOperationException>(() => { int current = enumerator.Current; });
+        }
+
+        [Test]
+        public void EnumeratorMoveNext_EmptyQueue_ReturnFalse()
+        {
+            var queue = new Queue<string>();
+            var enumerator = queue.GetEnumerator();
+            Assert.IsFalse(enumerator.MoveNext());
+        }
+
+        [Test]
+        public void Contains_DoesContain_ReturnTrue()
+        {
+            var queueOfObjs = new Queue<object>();
+            var firstObj = new object();
+            queueOfObjs.Enqueue(new object());
+            queueOfObjs.Enqueue(firstObj);
+            Assert.IsTrue(queueOfObjs.Contains(firstObj));
+        }
+
+        [Test]
+        public void Contains_DoesntContain_ReturnFalse()
+        {
+            var queue = new Queue<char>();
+            queue.Enqueue('a');
+            queue.Enqueue('b');
+            queue.Enqueue('c');
+            Assert.IsFalse(queue.Contains('x'));
+        }
     }
 }
