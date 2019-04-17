@@ -144,5 +144,16 @@ namespace Queue.Tests
             queue.Enqueue('c');
             Assert.IsFalse(queue.Contains('x'));
         }
+
+        [Test]
+        public void Foreach_ChangeQueueWhileIterating_ThrowsInvalidOperationException()
+        {
+            var queue = new Queue<char>();
+            queue.Enqueue('a');
+            queue.Enqueue('b');
+            queue.Enqueue('c');
+            Assert.Throws<InvalidOperationException>(() => { foreach (var item in queue) { queue.Enqueue('c'); } });
+        }
+
     }
 }
